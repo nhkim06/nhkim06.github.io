@@ -1,3 +1,6 @@
+// Todo : sceneNum 값 업데이트, 다음 넘어갈 html 파일 업데이트
+// localStorage.setItem('scene', '1');
+
 window.addEventListener('load', () => {
   const canvas = document.getElementById('canvas1');
   const ctx = canvas.getContext('2d');
@@ -5,8 +8,13 @@ window.addEventListener('load', () => {
   canvas.height = 720;
 
   let nextScene = false;
-  let sceneNum = Number(localStorage.getItem("scene") || "1");
-  console.log("sceneNum:", sceneNum);
+
+  if (localStorage.getItem('scene') === null || localStorage.getItem('scene') >= 5) {
+    localStorage.setItem('scene', '1');
+  }
+
+  let sceneNum = Number(localStorage.getItem('scene'));
+  console.log(sceneNum);
 
   class InputHandler {
     constructor() {
@@ -36,7 +44,7 @@ window.addEventListener('load', () => {
 
       if (sceneNum === 1) {
         this.x = 150;
-        this.y = this.gameHeight - this.height;
+        this.y = gameHeight - this.height;
         this.image = document.getElementById('playerImage');
       } else if (sceneNum === 2) {
         this.x = 500;
@@ -46,6 +54,10 @@ window.addEventListener('load', () => {
         this.x = 150;
         this.y = 400;
         this.image = document.getElementById('playerImage');
+      } else if (sceneNum === 4) {
+        this.x = 500;
+        this.y = 250; // 수정된 부분
+        this.image = document.getElementById('playerImage2');
       }
     }
 
@@ -72,13 +84,18 @@ window.addEventListener('load', () => {
         this.speed = 0;
       }
 
-      if (sceneNum === 1) this.x += this.speed;
-      else if (sceneNum === 2) {
+      if (sceneNum === 1) {
+        this.x += this.speed;
+      } else if (sceneNum === 2) {
         this.x -= this.speed;
         this.y -= this.speed / 3;
       } else if (sceneNum === 3) {
         this.x += this.speed;
         this.y -= this.speed / 3;
+      } else if (sceneNum === 4) {
+        this.x -= this.speed;
+        this.y -= this.speed / 3;
+        if ( this.x <= 120 ) nextScene = true;
       }
 
       if (this.x < 0) this.x = 0;
@@ -134,6 +151,7 @@ window.addEventListener('load', () => {
   const door3 = new Door(canvas.width, canvas.height, 530, 250);
 
   let lastTime = 0;
+
   function animate(timeStamp) {
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
@@ -147,16 +165,26 @@ window.addEventListener('load', () => {
     if (sceneNum === 1) player.update(input, deltaTime, door1);
     else if (sceneNum === 2) player.update(input, deltaTime, door2);
     else if (sceneNum === 3) player.update(input, deltaTime, door3);
+    else if (sceneNum === 4) player.update(input, deltaTime, door2);
 
     displayStatusText(ctx);
 
     if (nextScene) {
+      localStorage.setItem('scene', sceneNum + 1);
       if (sceneNum === 1) window.location.href = 'week1-video.html';
-      else if (sceneNum === 2) window.location.href = 'op.html'; // ✅ 바로 op.html로 이동
-      else if (sceneNum === 3) window.location.href = 'week3-video.html';
-    } else {
+      else if (sceneNum === 2) {
+        window.location.href = 'op.html';}
+      else if (sceneNum === 3) {
+        window.location.href = 'week3-video.html';
+      }
+      else if (sceneNum === 4){
+        localStorage.setItem('scene', sceneNum+1);
+        window.location.href = 'index.html';
+    } }
+    else {
       requestAnimationFrame(animate);
     }
   }
+
   animate(0);
 });

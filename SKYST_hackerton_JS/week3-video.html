@@ -5,15 +5,15 @@
   <title>3주차 영상</title>
 </head>
 <body>
-  <video id="introVideo" width="100%" autoplay>
-    <source src="assets/video/Comp 1.mp4" type="video/mp4" />
+  <video id="video" width="100%" autoplay>
+    <source src="assets/classroom.mp4" type="video/mp4" />
     브라우저가 영상을 지원하지 않습니다.
   </video>
 
   <script>
-    const video = document.getElementById("introVideo");
+    const video = document.getElementById("video");
     video.addEventListener("ended", () => {
-      window.location.href = "index.html"; // 4주차 게임 시작
+      window.location.href = "week3-question.html";
     });
   </script>
 </body>

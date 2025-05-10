@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>1주차 답변</title>
+  <link rel="stylesheet" href="css/answer.css" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@100..900&family=Tagesschrift&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="container">
+    <h1>1주차 질문</h1>
+    <p>당신은 왜 이 꿈을 꾸게 되었나요?</p>
+    <div class="answer" id="answer-display"></div>
+    <button onclick="goBack()">뒤로가기</button>
+  </div>
+  <script>
+    const answer = localStorage.getItem("answer1") || "아직 답변이 입력되지 않았습니다.";
+    document.getElementById("answer-display").textContent = answer;
+
+    function goBack() {
+      sessionStorage.setItem("fromAnswerPage", "true");
+      history.back();
+    }
+  </script>
+</body>
+</html>

@@ -52,7 +52,7 @@ function nextDialog() {
 function goToNextPage() {
   if (currentIndex >= dialogs.length) {
     localStorage.setItem("scene", "3"); // ✅ scene 갱신
-    window.location.href = "week2-question.html";
+    window.location.href = "quiz.html";
   }
 }
 

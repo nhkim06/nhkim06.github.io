@@ -1,0 +1,29 @@
+<!-- week3-answer.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>3주차 답변</title>
+  <link rel="stylesheet" href="css/answer.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@100..900&family=Tagesschrift&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="container">
+    <h1>3주차 질문</h1>
+    <p>당신이 꿈을 이루기 위해 앞으로 할 수 있는 일은 무엇인가요?</p>
+    <div class="answer" id="answer-display"></div>
+    <button onclick="goBack()">뒤로가기</button>
+  </div>
+  <script>
+    const answer = localStorage.getItem("answer3") || "아직 답변이 입력되지 않았습니다.";
+    document.getElementById("answer-display").textContent = answer;
+
+    function goBack() {
+      sessionStorage.setItem("fromAnswerPage", "true");
+      history.back();
+    }
+  </script>
+</body>
+</html>

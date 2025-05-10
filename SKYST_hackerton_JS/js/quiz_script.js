@@ -84,9 +84,14 @@ function showResult() {
   isQuizFinished = true;
   questionEl.textContent = "퀴즈를 모두 완료했습니다!";
   optionsEl.forEach(btn => btn.style.display = "none");
-  resultEl.textContent = "수고하셨습니다! 다시 시작하려면 아래 버튼을 누르세요.";
-  restartBtn.style.display = "inline-block";
+  resultEl.textContent = "수고하셨습니다! 다음 단계로 이동합니다...";
+
+  // ✅ 2초 후 자동으로 week2-question.html로 이동
+  setTimeout(() => {
+    window.location.href = "week2-question.html";
+  }, 2000);
 }
+
 
 function restartQuiz() {
   currentIndex = 0;
