@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>1주차 영상</title>
+</head>
+<body>
+  <video id="introVideo" width="100%" autoplay>
+    <source src="assets/musicfestival2.mp4" type="video/mp4" />
+    브라우저가 영상을 지원하지 않습니다.
+  </video>
+
+  <script>
+    const video = document.getElementById("introVideo");
+    video.addEventListener("ended", () => {
+      window.location.href = "week1-question.html";  // 질문 페이지로 이동
+    });
+  </script>
+</body>
+</html>

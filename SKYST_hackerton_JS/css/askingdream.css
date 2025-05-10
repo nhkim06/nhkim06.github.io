@@ -1,0 +1,57 @@
+    /* 全体の余白やスクロール防止 */
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      
+      /* 背景画像を全画面に表示 */
+      #askingdream-area {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-image: url("../assets/askingdream_background.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        z-index: 0;
+      }
+      
+      
+      /* 画像を前面に出す */
+      img {
+        position: absolute;  /* 自由に配置できるようにする */
+        z-index: 1;          /* 背景より前に表示される */
+      }
+      
+
+      img[src*="player"] {
+        top: 70%;
+        left: 50%;
+        transform: translate(-50%, -50%)scale(0.5);
+      }
+      
+      #dialog-box {
+        position: absolute;
+        bottom: 70%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 70%;
+        background-color: black;
+        color: white;
+        padding: 40px;
+        font-family: "Black Han Sans", sans-serif;
+        font-weight: 400;
+        font-size: 30px;
+        font-style: normal;
+        border: 3px solid white;
+        box-sizing: border-box;
+        z-index: 2;
+        cursor: pointer;
+      }
+      
+      
+      

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>리듬 게임</title>
+
+  <!-- Google Fonts: Pixelify Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- CSS & JS 분리 -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="score-display">Score: 0</div>
+  <button id="next-button">다음</button>
+
+  <div id="game-area">
+    <img src="assets/piano.png" id="piano" alt="Piano" />
+  </div>
+
+  <audio id="bgm" src="assets/music.mp3" preload="auto"></audio>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
