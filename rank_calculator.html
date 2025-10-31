@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>한 과목 석차 &amp; 백분위 계산기</title>
+  <style>
+    :root{--bg:#f7fafc;--card:#fff;--accent:#2563eb;--muted:#6b7280;}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans KR',Helvetica,Arial;"line-height":1.4;margin:0;background:var(--bg);color:#0f172a;display:flex;align-items:flex-start;justify-content:center;padding:28px;}
+    .card{max-width:760px;width:100%;background:var(--card);border-radius:14px;padding:20px 22px 28px;box-shadow:0 6px 18px rgba(15,23,42,0.08);}
+    h1{margin:0 0 6px;font-size:20px;}
+    p.lead{margin:0 0 14px;color:var(--muted);font-size:13px;}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+    label{display:flex;flex-direction:column;font-size:13px;color:#111827;}
+    input[type=number]{margin-top:8px;padding:10px;border:1px solid #e6e9ef;border-radius:8px;font-size:15px;}
+    .row{display:flex;gap:8px;margin-top:12px;}
+    button{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600;}
+    .btn-primary{background:var(--accent);color:white;}
+    .btn-muted{background:#eef2ff;color:#0f172a;border:1px solid #e6e9ef;}
+    .result{margin-top:18px;padding:14px;border-radius:10px;background:#fbfdff;border:1px solid #eef2ff;}
+    .result .line{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed rgba(15,23,42,0.04);}
+    .result .line:last-child{border-bottom:0;}
+    .muted{color:var(--muted);font-size:13px;}
+    .small{font-size:13px;color:var(--muted);margin-top:8px;}
+    @media (max-width:640px){.grid{grid-template-columns:1fr}.row{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <div class="card" role="main">
+    <br>
+    <h1>한 과목 석차 &amp; 백분위 계산기</h1>
+    <p class="lead">내 점수와 평균·표준편차·응시생 수를 입력 후 Submit을 누르면 정규분포 가정하의 추정 백분위와 예상 석차를 계산합니다.</p>
+    <br>
+    <form id="calcForm" onsubmit="return false;" autocomplete="off" aria-label="석차 계산기 입력">
+      <div class="grid">
+        <label>
+          내 점수 (총점)
+          <input id="score" type="number" step="any" value="0" required />
+        </label>
+
+        <label>
+          응시생 수 (N)
+          <input id="n" type="number" step="1" value="0" required />
+        </label>
+
+        <label>
+          평균 (Mean)
+          <input id="mean" type="number" step="any" value="0" required />
+        </label>
+
+        <label>
+          표준편차 (SD)
+          <input id="sd" type="number" step="any" value="0" required />
+        </label>
+      </div>
+      <br>
+
+
+      <div class="row" style="margin-top:16px;">
+        <button id="submitBtn" class="btn-primary">Submit</button>
+        <button id="resetBtn" class="btn-muted" type="button">Reset</button>
+      </div>
+
+      <div id="error" class="small" style="color:#b91c1c"></div>
+    </form>
+
+    <div id="output" class="result" style="display:none;" aria-live="polite">
+      <div style="font-weight:700;margin-bottom:8px">결과 (정규분포 가정)</div>
+      <div class="line"><div class="muted">표준점수 (z)</div><div id="zval">-</div></div>
+      <div class="line"><div class="muted">상위 퍼센트 (몇 % 보다 높은가)</div><div id="upper">-</div></div>
+      <div class="line"><div class="muted">예상 석차 (추정)</div><div id="rank">-</div></div>
+      <div class="small">주의: 이 계산기는 점수 분포를 정규분포로 가정한 추정치입니다. 실제 석차는 전체 점수 데이터가 필요합니다.</div>
+    </div>
+  </div>
+
+<script>
+// Error function approximation (Abramowitz & Stegun)
+function erf(x) {
+  var sign = (x >= 0) ? 1 : -1;
+  x = Math.abs(x);
+  var a1 = 0.254829592;
+  var a2 = -0.284496736;
+  var a3 = 1.421413741;
+  var a4 = -1.453152027;
+  var a5 = 1.061405429;
+  var p = 0.3275911;
+  var t = 1 / (1 + p * x);
+  var y = 1 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1) * t * Math.exp(-x*x);
+  return sign * y;
+}
+
+function normalCdf(z) {
+  return 0.5 * (1 + erf(z / Math.sqrt(2)));
+}
+
+function formatNum(x, digits) {
+  if (!isFinite(x)) return '-';
+  return Number(x).toLocaleString(undefined, { maximumFractionDigits: digits, minimumFractionDigits: digits });
+}
+
+document.getElementById('submitBtn').addEventListener('click', function () {
+  document.getElementById('error').textContent = '';
+  var score = Number(document.getElementById('score').value);
+  var mean = Number(document.getElementById('mean').value);
+  var sd = Number(document.getElementById('sd').value);
+  var n = Number(document.getElementById('n').value);
+
+  if (!isFinite(score) || !isFinite(mean) || !isFinite(sd) || !isFinite(n)) {
+    document.getElementById('error').textContent = '숫자를 모두 정확히 입력하세요.';
+    return;
+  }
+  if (sd <= 0) {
+    document.getElementById('error').textContent = '표준편차는 0보다 커야 합니다.';
+    return;
+  }
+  if (n <= 0 || !Number.isInteger(n)) {
+    document.getElementById('error').textContent = '응시생 수는 양의 정수여야 합니다.';
+    return;
+  }
+
+  var z = (score - mean) / sd;
+  var cdf = normalCdf(z); // P(X <= x)
+  var percentile = cdf * 100; // 하위 %
+  var upper = (1 - cdf) * 100; // 상위 %
+
+  var estRankFloat = n * (1 - cdf);
+  var estRank = Math.max(1, Math.round(estRankFloat));
+
+  document.getElementById('zval').textContent = formatNum(z, 3);
+  document.getElementById('upper').textContent = formatNum(upper, 2) + '%';
+  document.getElementById('rank').textContent = estRank + ' 등 (실수값: ' + formatNum(estRankFloat,2) + ')';
+
+  document.getElementById('output').style.display = 'block';
+});
+
+document.getElementById('resetBtn').addEventListener('click', function () {
+  document.getElementById('score').value = '0';
+  document.getElementById('mean').value = '0';
+  document.getElementById('sd').value = '0';
+  document.getElementById('n').value = '0';
+  document.getElementById('output').style.display = 'none';
+  document.getElementById('error').textContent = '';
+});
+</script>
+</body>
+</html>
