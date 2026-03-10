@@ -1,0 +1,315 @@
+@import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+header {
+    z-index: 10;
+    margin-top: 50px; /* 위쪽 벽으로부터 50px만큼 띄움 */
+}
+/* 기본 리셋 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body,
+html {
+    width: 100%;
+    height: 100%;
+    /* overflow: hidden; 스크롤 방지 */
+    font-family: 'Pretendard', sans-serif;
+}
+p {
+    font-family: 'Jua', sans-serif;
+    font-size: 3rem;
+    text-align: center;
+    color: #fff; /* 기본 글자색 */
+    margin: 20px;
+}
+
+p span {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 4rem;
+    color: #111; /* 글자색 검정 */
+
+    /* 1. 요청하신 색상과 나무 질감 적용 */
+    background-color: #ffd500;
+    background-size: cover;
+    background-blend-mode: multiply; /* 질감 합성 */
+
+    /* 2. 짱구 로고 특유의 두꺼운 외곽선과 입체 그림자 */
+    border: 4px solid #000;
+    border-radius: 15px;
+    text-shadow:
+        4px 4px 0px #e6007e,
+        /* 핑크색 입체 효과 */ -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
+
+    /* 3. 약간 기울여서 경쾌한 느낌 추가 */
+    transform: rotate(-2deg);
+    box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.2);
+}
+
+/* "짱구의", "게임" 부분에도 노란색 포인트 */
+p {
+    text-shadow: 2px 2px 0px #ffd500;
+}
+
+/* 배경 컨테이너 */
+.bg {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center; /* 세로 중앙 */
+}
+
+.row {
+    display: flex;
+    flex: 1; /* 가로 줄 높이를 동일하게 */
+    width: 100%;
+}
+
+.col {
+    flex: 1;
+    height: 100%;
+    background-color: #ffd500;
+    opacity: 0; /* 처음에는 안 보이게 설정 */
+    transform: scale(0); /* 처음에는 크기 0 */
+}
+.ani {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
+    pointer-events: none;
+}
+/* 비디오 풀스크린 설정 */
+video {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 비율 유지하며 꽉 채움 */
+    z-index: 1;
+    transform: translate(-50%, -50%);
+
+    /* 영상이 너무 밝으면 글자가 안 보이므로 어둡게 처리 */
+    filter: brightness(0.6);
+}
+.menu {
+    flex-grow: 1; /* 남은 세로 공간을 모두 채움 */
+    display: flex; /* 내부 요소 정렬을 위해 flex 사용 */
+    position: relative;
+    /* z-index: 5; */
+    justify-content: center; /* 가로 중앙 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    z-index: 10;
+    width: 100%;
+}
+
+/* 메뉴 스타일 */
+.menu > ul {
+    list-style: none;
+    display: flex;
+    background-color: #ffd500;
+    width: 20em;
+    padding: 3em 0;
+    border-radius: 8px;
+    justify-items: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 5px 5px 30px #000;
+}
+
+.menu > ul > li {
+    position: relative;
+    list-style: none;
+    padding: 10px 25px;
+    border: 2px solid #111;
+    width: 13em;
+    cursor: pointer;
+    overflow: hidden;
+    z-index: 1;
+    transition: color 0.3s;
+    text-align: center;
+    border-radius: 8px;
+    /* 1. 아래에서 위로 채워질 배경 높이 변수 (기본값 0%) */
+    --bg-height: 0%;
+
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.menu > ul > li::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    /* 2. 자바스크립트에서 조절할 변수를 적용 */
+    height: var(--bg-height);
+    background-color: #eab300;
+    z-index: -1;
+    /* transition은 GSAP이 대신할 거라 필요 없습니다. */
+}
+
+/* 글자색 반전은 CSS로 처리하는 게 가장 깔끔해요 */
+.menu > ul > li:hover {
+    color: #fff;
+}
+
+/* a태그가 있을 경우 색상 상속 */
+.menu > ul > li a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* 버튼 액티브 효과 (마우스를 눌렀을 때) */
+.menu > ul > li:active {
+    transform: translateY(2px); /* 약간 아래로 눌리는 효과 */
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5); /* 그림자를 작게 */
+}
+
+/* 모달 배경 (어둡고 불투명하게) */
+.modal-overlay {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8); /* 배경 불투명 처리 */
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 규칙 게시판 몸체 */
+.rule-board {
+    position: relative;
+    width: 80%;
+    max-width: 500px;
+    background-color: #ffd500;
+    background-blend-mode: multiply;
+    background-size: cover;
+    padding: 40px;
+    border: 5px solid #111;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    color: #111;
+    font-family: 'Jua', sans-serif;
+}
+
+/* 닫기 버튼 (X) */
+#close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #111;
+}
+
+.rule-board h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2rem;
+    text-decoration: underline;
+}
+
+.rule-content ul {
+    list-style: none;
+    line-height: 1.6;
+}
+
+.rule-content li {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    padding-left: 10px;
+    border-left: 4px solid #e6007e; /* 짱구 핑크 포인트 */
+}
+
+.rule-content strong {
+    color: #e6007e;
+}
+
+.difficulty-board {
+    position: relative;
+    width: 80%;
+    max-width: 480px;
+    background-color: #ffd500;
+    background-blend-mode: multiply;
+    background-size: cover;
+    padding: 36px 32px 28px;
+    border: 5px solid #111;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    color: #111;
+    font-family: 'Jua', sans-serif;
+    text-align: center;
+}
+
+#difficulty-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #111;
+    z-index: 5;
+}
+
+.difficulty-board h2 {
+    margin-bottom: 12px;
+    font-size: 1.8rem;
+}
+
+.difficulty-subtext {
+    color: #000;
+    margin-bottom: 20px;
+    font-size: 1rem;
+}
+
+.difficulty-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.difficulty-button {
+    width: 100%;
+    padding: 12px 0;
+    border-radius: 10px;
+    border: 2px solid rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background-color: #ffe66d;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25);
+    transition:
+        transform 0.1s ease-out,
+        box-shadow 0.1s ease-out,
+        filter 0.1s ease-out;
+}
+
+.difficulty-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    border-color: #000;
+}
