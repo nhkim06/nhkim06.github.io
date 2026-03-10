@@ -1,10 +1,4 @@
 <!doctype html>
-<!--
-  틱택토 실제 플레이 페이지
-  - 좌우 캐릭터(플레이어 짱구 / CPU 철수)와 중앙 3x3 보드를 렌더링
-  - 하단에 퀴즈 모달을 띄워 퀴즈를 맞춰야만 말(말판)을 둘 수 있게 구성
-  - /game/script.js 에서 게임 로직(턴, 승리 판정, 퀴즈, CPU 착수)을 담당
--->
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
@@ -80,6 +74,19 @@
         </div>
         <h2 id="quiz-question">문제가 여기에 표시됩니다.</h2>
         <div id="quiz-options"></div>
+      </div>
+    </div>
+    <div id="result-modal" class="modal">
+      <div class="modal-content">
+        <div id="result-header">
+          <span id="result-subject">과목</span>
+          <span id="result-type">유형</span>
+        </div>
+        <h2 id="result-title"></h2>
+        <p id="result-question"></p>
+        <div id="result-options"></div>
+        <p id="result-explanation"></p>
+        <button id="close-result-modal">닫기</button>
       </div>
     </div>
 

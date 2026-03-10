@@ -106,7 +106,7 @@ export function nextTurn(isCorrect, index) {
     }
   } else {
     wrongSound?.play();
-    alert('오답입니다! 다음 기회에 도전하세요.');
+    // alert('오답입니다! 다음 기회에 도전하세요.');
   }
 
   const nextPlayer = gameState.currentPlayer === 'X' ? 'O' : 'X';

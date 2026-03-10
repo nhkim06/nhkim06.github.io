@@ -4,6 +4,8 @@ const modal = document.getElementById('rule-modal');
 const closeBtn = document.getElementById('close-btn');
 const menuBtns = document.querySelectorAll('.menu > ul > li');
 
+const cols = document.querySelectorAll('.col');
+
 const startBtn = document.querySelector('#start');
 
 const difficultyModal = document.getElementById('difficulty-modal');
@@ -73,6 +75,10 @@ closeBtn.addEventListener('mouseleave', () => {
 
 window.addEventListener('load', () => {
     localStorage.removeItem('board');
+    gsap.set('.col', {
+        opacity: 0,
+        scale: 0,
+    });
 });
 startBtn.addEventListener('click', (e) => {
     e.preventDefault();

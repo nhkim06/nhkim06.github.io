@@ -43,82 +43,177 @@ export function openQuizModal(index, callback) {
     optionsContainer.innerHTML = '';
 
     // 보기 버튼 생성 (객관식/OX) 또는 주관식 입력창 생성
-    if (currentQuiz.options && currentQuiz.options.length > 0) {
+    if (currentQuiz.options?.length > 0) {
       currentQuiz.options.forEach((option) => {
         const btn = document.createElement('button');
         btn.className = 'quiz-option-btn';
         btn.textContent = option;
-        btn.onclick = () => handleAnswer(option, currentQuiz, callback);
+        btn.onclick = () => {
+          const isCorrect = option === currentQuiz.answer;
+          closeModal();
+          showResultModal(
+            isCorrect,
+            currentQuiz.question,
+            currentQuiz.explanation,
+            () => callback(isCorrect, index),
+            currentQuiz,
+            option,
+          );
+        };
         optionsContainer.appendChild(btn);
       });
     } else {
-      renderShortAnswerInput(currentQuiz, callback);
+      renderShortAnswerInput(currentQuiz, callback, index);
+      console.log('주관식 입력창 렌더링');
     }
+
+    if (quizModal) quizModal.style.display = 'flex';
   }
 
-  if (quizModal) quizModal.style.display = 'flex';
-}
+  function renderShortAnswerInput(quiz, callback, index) {
+    const container = document.getElementById('quiz-options');
 
-// 3. 주관식 입력창 렌더링
-function renderShortAnswerInput(quiz, callback) {
-  const container = document.getElementById('quiz-options');
+    const input = document.createElement('input');
+    input.id = 'quiz-answer-input';
+    input.className = 'quiz-answer-input';
+    input.placeholder = '정답 입력';
+    input.autocomplete = 'off'; // 자동완성 끄기
 
-  const input = document.createElement('input');
-  input.id = 'quiz-answer-input';
-  input.className = 'quiz-answer-input';
-  input.placeholder = '정답 입력';
-  input.autocomplete = 'off'; // 자동완성 끄기
+    const submitBtn = document.createElement('button');
+    submitBtn.className = 'quiz-option-btn';
+    submitBtn.textContent = '확인';
 
-  const submitBtn = document.createElement('button');
-  submitBtn.className = 'quiz-option-btn';
-  submitBtn.textContent = '확인';
+    submitBtn.onclick = () => {
+      const isCorrect = checkShortAnswer(input.value, quiz);
+      closeModal();
+      showResultModal(
+        isCorrect,
+        quiz.question,
+        quiz.explanation,
+        () => callback(isCorrect, index),
+        quiz,
+        input.value,
+      );
+    };
+    // 엔터키 지원
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault(); // 혹시 form submit 방지
+        submitAnswer();
+      }
+    });
 
-  // 엔터키 지원
-  input.onkeypress = (e) => {
-    if (e.key === 'Enter') handleAnswer(input.value, quiz, callback);
-  };
+    container.appendChild(input);
+    container.appendChild(submitBtn);
+    input.focus();
+  }
 
-  submitBtn.onclick = () => handleAnswer(input.value, quiz, callback);
+  // 4. 정답 확인 및 결과 전달
+  function handleAnswer(userAnswer, quiz, callback) {
+    closeModal();
+    const isCorrect = checkCorrect(userAnswer, quiz);
 
-  container.appendChild(input);
-  container.appendChild(submitBtn);
-  input.focus();
-}
+    // game.js의 nextTurn(isCorrect, index)으로 결과를 돌려줌
+    if (callback) callback(isCorrect);
+  }
 
-// 4. 정답 확인 및 결과 전달
-function handleAnswer(userAnswer, quiz, callback) {
-  closeModal();
-  const isCorrect = checkCorrect(userAnswer, quiz);
+  // 정답 검증 로직
+  function checkCorrect(userAnswer, quiz) {
+    const normUser = normalizeAnswer(userAnswer);
+    const normCorrect = normalizeAnswer(quiz.answer);
 
-  // game.js의 nextTurn(isCorrect, index)으로 결과를 돌려줌
-  if (callback) callback(isCorrect);
-}
+    // 기본 정답 비교
+    const isAnswerMatch = normUser === normCorrect;
 
-// 정답 검증 로직
-function checkCorrect(userAnswer, quiz) {
-  const normUser = normalizeAnswer(userAnswer);
-  const normCorrect = normalizeAnswer(quiz.answer);
+    // 키워드 비교 (주관식 대비)
+    const isKeywordMatch = quiz.keywords?.some(
+      (k) => normUser === normalizeAnswer(k),
+    );
 
-  // 기본 정답 비교
-  const isAnswerMatch = normUser === normCorrect;
+    return isAnswerMatch || isKeywordMatch;
+  }
 
-  // 키워드 비교 (주관식 대비)
-  const isKeywordMatch = quiz.keywords?.some(
-    (k) => normUser === normalizeAnswer(k),
-  );
+  // 문자열 정규화 (공백 제거, 소문자화)
+  function normalizeAnswer(text) {
+    return String(text ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, '');
+  }
+  function checkShortAnswer(userAnswer, quiz) {
+    const normUser = normalizeAnswer(userAnswer);
+    const normCorrect = normalizeAnswer(quiz.answer);
+    const isKeywordMatch = quiz.keywords?.some(
+      (k) => normUser === normalizeAnswer(k),
+    );
+    return normUser === normCorrect || isKeywordMatch;
+  }
+  function closeModal() {
+    const modal = document.getElementById('quiz-modal');
+    if (modal) modal.style.display = 'none';
+  }
 
-  return isAnswerMatch || isKeywordMatch;
-}
+  function showResultModal(
+    isCorrect,
+    question,
+    explanation,
+    callback,
+    currentQuiz,
+    selectedOption,
+  ) {
+    const modal = document.getElementById('result-modal');
+    if (!modal) return;
+    const title = document.getElementById('result-title');
+    const subject = document.getElementById('result-subject');
+    const type = document.getElementById('result-type');
+    const quest = document.getElementById('result-question');
+    const optionsContainer = document.getElementById('result-options');
+    const expPara = document.getElementById('result-explanation');
+    const closeBtn = document.getElementById('close-result-modal');
 
-// 문자열 정규화 (공백 제거, 소문자화)
-function normalizeAnswer(text) {
-  return String(text ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, '');
-}
+    title.textContent = isCorrect ? '정답입니다!' : '틀렸습니다!';
+    subject.textContent = currentQuiz.subject || '일반';
+    type.textContent = typeLabels[currentQuiz.type] || '퀴즈';
+    quest.textContent = question;
+    expPara.textContent = explanation;
+    optionsContainer.innerHTML = '';
 
-function closeModal() {
-  const modal = document.getElementById('quiz-modal');
-  if (modal) modal.style.display = 'none';
+    if (currentQuiz.options?.length > 0) {
+      currentQuiz.options.forEach((option) => {
+        const btn = document.createElement('button');
+        btn.className = 'result-option-btn';
+        btn.textContent = option;
+        if (isCorrect) {
+          if (option === currentQuiz.answer) btn.classList.add('correct');
+        } else {
+          if (option === selectedOption) btn.classList.add('incorrect');
+          if (option === currentQuiz.answer) btn.classList.add('correct');
+        }
+        optionsContainer.appendChild(btn);
+      });
+    } else {
+      const input = document.createElement('input');
+      input.id = 'result-answer-input';
+      input.value = selectedOption;
+      input.readOnly = true;
+      input.style.backgroundColor = isCorrect ? '#4CAF50' : '#f44336';
+      input.style.color = 'white';
+      input.style.fontWeight = 'bold';
+      optionsContainer.appendChild(input);
+
+      const correctAnswer = document.createElement('p');
+      correctAnswer.textContent = `정답: ${currentQuiz.answer}`;
+      correctAnswer.style.color = 'green';
+      correctAnswer.style.fontWeight = 'bold';
+      correctAnswer.style.webkitTextStroke = '0.3px #000000';
+      optionsContainer.appendChild(correctAnswer);
+    }
+
+    modal.style.display = 'flex';
+
+    closeBtn.onclick = () => {
+      modal.style.display = 'none';
+      callback();
+    };
+  }
 }
