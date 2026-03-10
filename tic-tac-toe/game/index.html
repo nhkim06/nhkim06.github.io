@@ -1,0 +1,115 @@
+<!doctype html>
+<!--
+  틱택토 실제 플레이 페이지
+  - 좌우 캐릭터(플레이어 짱구 / CPU 철수)와 중앙 3x3 보드를 렌더링
+  - 하단에 퀴즈 모달을 띄워 퀴즈를 맞춰야만 말(말판)을 둘 수 있게 구성
+  - /game/script.js 에서 게임 로직(턴, 승리 판정, 퀴즈, CPU 착수)을 담당
+-->
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CS지식 틱택토!</title>
+    <link rel="stylesheet" href="quizPage.css" />
+  </head>
+  <body>
+    <div class="game-page">
+      <!-- 현재 턴을 나타내는 아이콘 + 텍스트 -->
+      <div class="turn-panel">
+        <img
+          id="playerIcon"
+          class="turn-icon"
+          src="../assets/images/player0_mark.png"
+          alt="현재 플레이어 아이콘"
+        />
+        <span class="turn-text">짱구의 차례</span>
+      </div>
+
+      <div class="game-layout">
+        <!-- 중앙 3x3 틱택토 보드 -->
+        <div class="board-wrapper">
+          <div id="board" class="board-grid">
+            <button class="cell" data-index="0">
+              <span class="cell-number"></span>
+            </button>
+            <button class="cell" data-index="1">
+              <span class="cell-number"></span>
+            </button>
+            <button class="cell" data-index="2">
+              <span class="cell-number"></span>
+            </button>
+            <button class="cell" data-index="3">
+              <span class="cell-number"></span>
+            </button>
+            <button class="cell" data-index="4">
+              <span class="cell-number"></span>
+            </button>
+            <button class="cell" data-index="5">
+              <span class="cell-number"></span>
+            </button>
+            <button class="cell" data-index="6">
+              <span class="cell-number"></span>
+            </button>
+            <button class="cell" data-index="7">
+              <span class="cell-number"></span>
+            </button>
+            <button class="cell" data-index="8">
+              <span class="cell-number"></span>
+            </button>
+          </div>
+        </div>
+        <button id="resetBtn">Reset</button>
+        <img
+          class="character character-left"
+          src="../assets/images/player0.png"
+          alt="플레이어 짱구"
+        />
+        <img
+          class="character character-right"
+          src="../assets/images/player1.png"
+          alt="CPU 철수"
+        />
+      </div>
+    </div>
+
+    <div id="quiz-modal">
+      <div id="modal-content">
+        <div id="quiz-header">
+          <span id="quiz-subject">과목</span>
+          <span id="quiz-type">유형</span>
+        </div>
+        <h2 id="quiz-question">문제가 여기에 표시됩니다.</h2>
+        <div id="quiz-options"></div>
+      </div>
+    </div>
+
+    <div id="game-end-modal">
+      <div id="game-end-modal-content">
+        <h1 id="end-modal-title" class="ending-font pulse"></h1>
+        <div id="end-modal-content"></div>
+        <button id="restartBtn">다시하기</button>
+      </div>
+    </div>
+
+    <audio
+      id="correctSound"
+      style="display: none"
+      src="../assets/videos/correct-sound-effect2.mp3"
+      preload="auto"
+    ></audio>
+    <audio
+      id="wrongSound"
+      style="display: none"
+      src="../assets/videos/fail-sound-effect.mp3"
+      preload="auto"
+    ></audio>
+    <audio
+      id="endingSound"
+      style="display: none"
+      src="../assets/videos/ending-sound.mp3"
+      preload="auto"
+    ></audio>
+
+    <script src="../js/game.js" type="module"></script>
+  </body>
+</html>
