@@ -91,6 +91,29 @@
       </div>
     </div>
 
+    <div id="difficulty-modal" class="modal-overlay">
+      <div class="difficulty-board">
+        <button id="difficulty-close-btn" aria-label="난이도 창 닫기">
+          &times;
+        </button>
+        <h2>난이도를 선택해 주세요</h2>
+        <p class="difficulty-subtext">
+          난이도에 따라 CPU의 전략이 달라집니다. <br />
+          (Easy / Normal / Hard)
+        </p>
+        <div class="difficulty-buttons">
+          <button class="difficulty-button" data-level="easy">
+            쉬움 (Easy)
+          </button>
+          <button class="difficulty-button" data-level="normal">
+            보통 (Normal)
+          </button>
+          <button class="difficulty-button" data-level="hard">
+            어려움 (Hard)
+          </button>
+        </div>
+      </div>
+    </div>
     <audio
       id="correctSound"
       style="display: none"

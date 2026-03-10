@@ -71,6 +71,9 @@ closeBtn.addEventListener('mouseleave', () => {
     });
 });
 
+window.addEventListener('load', () => {
+    localStorage.removeItem('board');
+});
 startBtn.addEventListener('click', (e) => {
     e.preventDefault();
     difficultyModal.style.display = 'flex';

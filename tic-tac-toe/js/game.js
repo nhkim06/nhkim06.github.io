@@ -26,6 +26,7 @@ const endModal = document.getElementById('game-end-modal');
 const restartBtn = document.getElementById('restartBtn');
 const endModalTitle = document.getElementById('end-modal-title');
 const endModalContent = document.getElementById('end-modal-content');
+const difficultymodal = document.getElementById('difficulty-modal');
 
 // 2. 게임 상태
 let audioUnlocked = false;
@@ -112,7 +113,7 @@ export function nextTurn(isCorrect, index) {
   setTurn(nextPlayer);
 
   if (gameState.currentPlayer === 'O' && !gameState.isGameOver) {
-    setTimeout(triggerAiTurn, 700);
+    setTimeout(triggerAiTurn, 1800);
   }
 }
 
@@ -140,7 +141,7 @@ function triggerAiTurn() {
 function endGame(result) {
   gameState.isGameOver = true;
   localStorage.removeItem('board');
-  setTimeout(() => openGameEnding(result), 500);
+  setTimeout(() => openGameEnding(result), 300);
 }
 
 function openGameEnding(result) {
@@ -186,10 +187,33 @@ cells.forEach((cell, index) => {
   });
 });
 
+// 5. 이벤트 리스너 - 다시하기 버튼 클릭 시
 restartBtn?.addEventListener('click', () => {
-  localStorage.removeItem('board');
-  window.location.reload();
+  // 1. 현재 열려있는 엔딩 모달을 닫습니다.
+  if (endModal) {
+    endModal.classList.remove('is-open');
+  }
+
+  // 2. 난이도 선택 모달을 띄웁니다.
+  if (difficultymodal) {
+    difficultymodal.style.display = 'flex'; // 오버레이 표시
+  }
 });
+
+document.querySelectorAll('.difficulty-button').forEach((btn) => {
+  btn.addEventListener('click', (e) => {
+    const level = e.target.dataset.level;
+    localStorage.setItem('tttDifficulty', level); // 선택한 난이도 저장
+    localStorage.removeItem('board'); // 기존 게임판 데이터 삭제
+    window.location.reload(); // 페이지를 새로고침하여 새 게임 시작
+  });
+});
+
+document
+  .getElementById('difficulty-close-btn')
+  ?.addEventListener('click', () => {
+    if (difficultymodal) difficultymodal.style.display = 'none';
+  });
 
 document.getElementById('resetBtn')?.addEventListener('click', () => {
   localStorage.removeItem('board');

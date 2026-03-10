@@ -307,3 +307,9 @@ video {
         box-shadow 0.1s ease-out,
         filter 0.1s ease-out;
 }
+
+.difficulty-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    border-color: #000;
+}
