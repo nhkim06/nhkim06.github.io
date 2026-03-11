@@ -99,7 +99,7 @@ export function openQuizModal(index, callback) {
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault(); // 혹시 form submit 방지
-        submitAnswer();
+        submitBtn.click();
       }
     });
 
