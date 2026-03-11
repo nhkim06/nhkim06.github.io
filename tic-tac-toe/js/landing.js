@@ -111,8 +111,10 @@ if (difficultyButtons.length > 0) {
         },
         ease: 'power2.inOut',
         onComplete: () => {
-          // 선택한 난이도(level)를 쿼리로 넘겨 게임 페이지 이동
-          window.location.href = `./game?difficulty=${encodeURIComponent(level)}`;
+          // 클로저의 level이 유효하지 않을 수 있으므로 localStorage에서 한 번 더 읽어 URL에 반영
+          const difficultyToUse =
+            level || localStorage.getItem('tttDifficulty') || 'easy';
+          window.location.href = `./game?difficulty=${encodeURIComponent(difficultyToUse)}`;
         },
       });
     });

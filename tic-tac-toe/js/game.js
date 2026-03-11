@@ -36,15 +36,18 @@ export let gameState = {
   isGameOver: false,
 };
 
-// 난이도 설정
+// 난이도 설정 (URL이 'undefined' 문자열이면 무시하고 localStorage 사용)
 const DIFFICULTY_KEY = 'tttDifficulty';
+const VALID_LEVELS = ['easy', 'normal', 'hard'];
 const getDifficulty = () => {
   const url = new URL(window.location.href);
-  return (
-    url.searchParams.get('difficulty') ||
-    localStorage.getItem(DIFFICULTY_KEY) ||
-    'easy'
-  );
+  const fromUrl = url.searchParams.get('difficulty');
+  const fromStorage = localStorage.getItem(DIFFICULTY_KEY);
+  if (fromUrl && fromUrl !== 'undefined' && VALID_LEVELS.includes(fromUrl)) {
+    return fromUrl;
+  }
+  if (fromStorage && VALID_LEVELS.includes(fromStorage)) return fromStorage;
+  return 'easy';
 };
 const difficulty = getDifficulty();
 
