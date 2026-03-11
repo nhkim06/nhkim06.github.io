@@ -102,7 +102,7 @@ export function nextTurn(isCorrect, index) {
   if (isCorrect) {
     gameState.board[index] = gameState.currentPlayer;
     renderBoard();
-     animatePlacedCell(index);
+    animatePlacedCell(index);
     saveToLocalStorage();
     correctSound?.play();
 
@@ -213,9 +213,13 @@ restartBtn?.addEventListener('click', () => {
 document.querySelectorAll('.difficulty-button').forEach((btn) => {
   btn.addEventListener('click', (e) => {
     const level = e.target.dataset.level;
+    if (!level) return;
     localStorage.setItem('tttDifficulty', level); // 선택한 난이도 저장
     localStorage.removeItem('board'); // 기존 게임판 데이터 삭제
-    window.location.reload(); // 페이지를 새로고침하여 새 게임 시작
+    // URL 쿼리를 새 난이도로 바꾼 뒤 새로고침 (이전 difficulty가 URL에 남아 있으면 그게 우선 적용되므로)
+    const url = new URL(window.location.href);
+    url.searchParams.set('difficulty', level);
+    window.location.href = url.toString();
   });
 });
 
