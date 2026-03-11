@@ -37,7 +37,7 @@ body {
   align-items: center;
   gap: 12px;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   color: #fff;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
@@ -69,28 +69,33 @@ body {
 }
 
 .game-layout {
-  display: block; /* 그리드 대신 단순 블록으로 변경 */
-  z-index: 10;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'left board right'
+    '. reset .';
+  align-items: center;
+  column-gap: 32px;
+  row-gap: 16px;
+  position: relative;
 }
 
 .character {
-  position: absolute;
+  position: static;
   pointer-events: none;
-  bottom: 15%;
-  transform: none;
-  transform-origin: bottom center;
   width: 18vw;
   max-width: 220px;
   min-width: 120px;
   object-fit: contain;
-  z-index: 1;
 }
 
 .character-left {
+  grid-area: left;
   left: 10%;
 }
 
 .character-right {
+  grid-area: right;
   right: 10%;
 }
 
@@ -124,6 +129,7 @@ body {
 
 /* 3. 보드 및 셀 스타일 (새 스타일 기반으로 조정) */
 .board-wrapper {
+  grid-area: board;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -132,6 +138,8 @@ body {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border-radius: 18px;
+  position: relative;
+  z-index: 2;
 }
 
 .board-grid {
@@ -158,6 +166,30 @@ body {
     background 0.15s ease-out;
 }
 
+.cell:active {
+  transform: scale(0.95);
+}
+
+.cell-placed {
+  animation: cell-pop 0.35s ease-out;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+@keyframes cell-pop {
+  0% {
+    transform: translateY(-40px) scale(1.18);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(0) scale(0.92);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
 .cell-mark {
   width: 80%;
   height: 80%;
@@ -165,6 +197,8 @@ body {
 }
 
 #resetBtn {
+  grid-area: reset;
+  justify-self: center;
   position: static;
   margin: 0 auto; /* 좌우 마진을 자동으로 설정해 한 번 더 중앙 확인 */
   width: 120px; /* 버튼 너비 지정 */
@@ -460,15 +494,22 @@ body {
 @media (max-width: 900px) {
   .game-layout {
     grid-template-columns: 1fr;
-    row-gap: 24px;
-  }
-  .character-left,
-  .character-right {
-    justify-self: center;
+    grid-template-areas:
+      'board'
+      'reset'
+      'left'
+      'right';
+    row-gap: 16px;
   }
   .cell {
     width: 90px;
     height: 90px;
+  }
+  .character {
+    width: 28vw;
+    max-width: 160px;
+    min-width: 90px;
+    justify-self: center;
   }
 }
 
@@ -510,14 +551,25 @@ body {
   margin-bottom: 15px;
 }
 
-#result-explanation {
+.result-explanation-box {
   margin-top: 20px;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.6);
+  padding: 10px 14px 14px;
   border-radius: 12px;
   border: 2px dashed #111;
+  background: rgba(255, 255, 255, 0.6);
+  text-align: left;
+}
+
+.result-explanation-box legend {
+  padding: 0 8px;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+#result-explanation {
   font-size: 0.95rem;
   line-height: 1.6;
+  margin: 4px 0 0;
 }
 
 #result-options {

@@ -69,6 +69,15 @@ export function renderBoard() {
   });
 }
 
+function animatePlacedCell(index) {
+  const cell = cells[index];
+  if (!cell) return;
+  cell.classList.remove('cell-placed');
+  // 강제로 리플로우를 발생시켜 연속 착수 시에도 애니메이션이 다시 재생되도록 처리
+  void cell.offsetWidth;
+  cell.classList.add('cell-placed');
+}
+
 export function setTurn(turn) {
   gameState.currentPlayer = turn;
   const isPlayer = turn === 'X';
@@ -93,6 +102,7 @@ export function nextTurn(isCorrect, index) {
   if (isCorrect) {
     gameState.board[index] = gameState.currentPlayer;
     renderBoard();
+     animatePlacedCell(index);
     saveToLocalStorage();
     correctSound?.play();
 
